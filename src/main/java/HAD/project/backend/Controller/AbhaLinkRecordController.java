@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import HAD.project.backend.Model.Request;
+import HAD.project.backend.Model.TokenToLink;
 import HAD.project.backend.Service.RequestService;
+import HAD.project.backend.Service.TokenToLinkService;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @CrossOrigin("*")
@@ -23,6 +24,9 @@ public class AbhaLinkRecordController {
 
     @Autowired
     private RequestService requestService;
+
+    @Autowired
+    private TokenToLinkService tokenToLinkService;
 
     @Value("${abdm.clientId}")
     private String clientId;
@@ -163,6 +167,48 @@ public class AbhaLinkRecordController {
         ResponseEntity<Map<String, Object>> fetchAuthResponseEntity = restTemplate.exchange(apiToFetchAuth, HttpMethod.POST, fetchAuthEntity, new ParameterizedTypeReference<Map<String, Object>>() {});
         return new ResponseEntity<>(fetchAuthResponseEntity.getBody(), fetchAuthResponseEntity.getStatusCode());        
     }
+
+
+    @PostMapping("/auth/add-care-context")
+    public ResponseEntity<Map<String, Object>> addCareContext(@RequestBody Map<String, Object> requestJson) {
+        String abhaAddress = (String) requestJson.get("abhaAddress");
+        String referenceNumber = (String) requestJson.get("referenceNumber");
+        String display = (String) requestJson.get("display");
+    
+        TokenToLink tokenToLinkRecord = tokenToLinkService.getTokenByPatientAbhaAddress(abhaAddress);
+    
+        Map<String, Object> responseJson = new HashMap<>();
+        responseJson.put("requestId", tokenToLinkRecord.getRequestId());
+        responseJson.put("timestamp", tokenToLinkRecord.getTimeStampOfGeneration());
+    
+        Map<String, Object> link = new HashMap<>();
+        link.put("accessToken", tokenToLinkRecord.getAccessToken());
+    
+        Map<String, Object> patient = new HashMap<>();
+        patient.put("referenceNumber", referenceNumber);
+        patient.put("display", display);
+    
+        List<Map<String, Object>> careContexts = (List<Map<String, Object>>) requestJson.get("careContexts");
+        
+        patient.put("careContexts", careContexts);
+        link.put("patient", patient);
+        responseJson.put("link", link);
+
+    
+        String jwtToken = generateToken();
+    
+        String apiToFetchAuth = "https://dev.abdm.gov.in/gateway/v0.5/links/link/add-contexts";
+        HttpHeaders fetchAuthHeaders = new HttpHeaders();
+        fetchAuthHeaders.setContentType(MediaType.APPLICATION_JSON);
+        fetchAuthHeaders.set("Authorization", "Bearer " + jwtToken);
+        fetchAuthHeaders.set("X-CM-ID", "sbx");
+        HttpEntity<Map<String, Object>> fetchAuthEntity = new HttpEntity<>(responseJson, fetchAuthHeaders);
+        ResponseEntity<Map<String, Object>> fetchAuthResponseEntity = restTemplate.exchange(apiToFetchAuth, HttpMethod.POST, fetchAuthEntity, new ParameterizedTypeReference<Map<String, Object>>() {});
+        return new ResponseEntity<>(fetchAuthResponseEntity.getBody(), fetchAuthResponseEntity.getStatusCode());
+    }
+    
+
+
 
 
 
