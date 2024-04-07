@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import HAD.project.backend.Model.Request;
 import HAD.project.backend.Service.RequestService;
 
@@ -121,6 +120,8 @@ public class AbhaLinkRecordController {
         query.put("requester", requester);
 
         responseJson.put("query", query);
+
+        // return responseJson;
         
         String accessToken = generateToken();
 
@@ -136,12 +137,7 @@ public class AbhaLinkRecordController {
     }
 
     @PostMapping("/auth/confirm")
-    public ResponseEntity<Map<String, Object>> confirmAuth(@RequestBody Map<String, Object> requestJson) {
-        String id = (String) requestJson.get("id");
-        String purpose = (String) requestJson.get("purpose");
-        String requesterType = (String) requestJson.get("requesterType");
-        String requesterId = (String) requestJson.get("requesterId");
-        String authMode = (String) requestJson.get("authMode");
+    public ResponseEntity<Map<String, Object>> confirmAuth(@RequestBody Map<String, Object> requestJson) {  
         String requestId = (String) requestJson.get("requestId");
         String otp = (String) requestJson.get("otp");
 
@@ -158,7 +154,7 @@ public class AbhaLinkRecordController {
         
         String accessToken = generateToken();
 
-        String apiToFetchAuth = "https://dev.abdm.gov.in/gateway/v0.5/users/auth/init";
+        String apiToFetchAuth = "https://dev.abdm.gov.in/gateway/v0.5/users/auth/confirm";
         HttpHeaders fetchAuthHeaders = new HttpHeaders();
         fetchAuthHeaders.setContentType(MediaType.APPLICATION_JSON);
         fetchAuthHeaders.set("Authorization", "Bearer " + accessToken);
@@ -166,7 +162,6 @@ public class AbhaLinkRecordController {
         HttpEntity<Map<String, Object>> fetchAuthEntity = new HttpEntity<>(responseJson, fetchAuthHeaders);
         ResponseEntity<Map<String, Object>> fetchAuthResponseEntity = restTemplate.exchange(apiToFetchAuth, HttpMethod.POST, fetchAuthEntity, new ParameterizedTypeReference<Map<String, Object>>() {});
         return new ResponseEntity<>(fetchAuthResponseEntity.getBody(), fetchAuthResponseEntity.getStatusCode());        
-
     }
 
 
