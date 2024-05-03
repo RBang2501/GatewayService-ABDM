@@ -251,6 +251,31 @@ public class WebHookController {
             e.printStackTrace(); 
         }
     }
+
+    @PostMapping("/v0.5/consent-requests/init")
+    public void handleWebhookEventCareContext(@RequestBody String payload) {
+        try {
+            Map<String, Object> requestJson = objectMapper.readValue(payload, new TypeReference<Map<String, Object>>() {});
+
+
+
+            // String frontendUrl = "http://localhost:3000/initAuth"; 
+
+            // HttpHeaders headers = new HttpHeaders();
+            // headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestJson, headers);
+            // RestTemplate restTemplate = new RestTemplate();
+            // ResponseEntity<String> response = restTemplate.postForEntity(frontendUrl, requestEntity, String.class);
+            // if (response.getStatusCode() == HttpStatus.OK) {
+            //     System.out.println("Demographic data sent successfully to the frontend.");
+            // } else {
+            //     System.out.println("Failed to send demographic data to the frontend. Status code: " + response.getStatusCodeValue());
+            // }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace(); 
+        }
+    }
     
 
 
