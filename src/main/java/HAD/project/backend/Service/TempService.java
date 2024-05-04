@@ -19,7 +19,7 @@ public class TempService {
         return tempDAO.save(temp);
     }
 
-    public Optional<Temp> findById(UUID id) {
+    public Optional<Temp> findById(String id) {
         return Optional.ofNullable(tempDAO.findById(id));
     }
 
@@ -27,7 +27,7 @@ public class TempService {
         return tempDAO.findAll();
     }
 
-    public void deleteById(UUID id) {
+    public void deleteById(String id) {
         tempDAO.deleteById(id);
     }
     

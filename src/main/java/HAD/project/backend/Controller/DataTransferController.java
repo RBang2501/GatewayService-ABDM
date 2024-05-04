@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 
+import HAD.project.backend.DAO.BundleDAO;
+import HAD.project.backend.Model.Bundle;
 import HAD.project.backend.Model.Document;
 import HAD.project.backend.Service.DocumentService;
 
@@ -19,6 +21,9 @@ import java.util.Map;
 public class DataTransferController {
 
     private final RestTemplate restTemplate = new RestTemplate();
+
+    @Autowired
+    private BundleDAO bundleDAO; 
 
     @Autowired
     private DocumentService documentService;
@@ -49,32 +54,16 @@ public class DataTransferController {
     @PostMapping("/hoja-data-transfer-sim-sim")
     public ResponseEntity<String> receiveDataFile(@RequestBody Map<String, Object> requestJson) {
         try {
-            String fileContentString = (String) requestJson.get("file");
-            String patientAbha = (String) requestJson.get("abhaAddress");
+            String display = (String) requestJson.get("display");
+            String jsonString = (String) requestJson.get("jsonString");
 
-            byte[] fileContent = fileContentString.getBytes();
+            Bundle bundle = new Bundle();
+            bundle.setDisplay(display);
+            bundle.setJsonString(jsonString);
 
-            // Prepare request body for creating the document
-            Map<String, Object> documentRequestBody = new HashMap<>();
-            documentRequestBody.put("document", fileContent);
-            documentRequestBody.put("abhaAddress", patientAbha);
+            bundleDAO.save(bundle);
 
-            // Make a POST request to create the document
-            ResponseEntity<String> response = restTemplate.postForEntity(
-                    "http://localhost:8087/received-store/documents/create",
-                    documentRequestBody,
-                    String.class);
-
-            System.out.println(patientAbha);
-            System.out.println(fileContent);
-
-            
-            if (response.getStatusCode() == HttpStatus.CREATED) {
-                return ResponseEntity.ok("Document created successfully!");
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Error creating document: " + response.getBody());
-            }
+            return ResponseEntity.ok("Bundle object created and stored successfully!");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error receiving or processing data.");
@@ -101,4 +90,5 @@ public class DataTransferController {
                 HttpMethod.POST, fetchAuthEntity, new ParameterizedTypeReference<Map<String, Object>>() {});
         return new ResponseEntity<>(fetchAuthResponseEntity.getBody(), fetchAuthResponseEntity.getStatusCode());
     }
+
 }
