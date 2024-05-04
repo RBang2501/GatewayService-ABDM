@@ -24,7 +24,7 @@ public class TempController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<Temp> getTempById(@PathVariable UUID id) {
+    public ResponseEntity<Temp> getTempById(@PathVariable String id) {
         return tempService.findById(id)
                 .map(temp -> new ResponseEntity<>(temp, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -36,7 +36,7 @@ public class TempController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteTempById(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteTempById(@PathVariable String id) {
         tempService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

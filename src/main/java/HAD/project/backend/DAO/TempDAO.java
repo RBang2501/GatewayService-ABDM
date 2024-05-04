@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import HAD.project.backend.Model.Temp;
 
-import java.util.*; 
 
 @Repository
 public class TempDAO {
@@ -22,7 +21,7 @@ public class TempDAO {
     }
 
     @Transactional(readOnly = true)
-    public Temp findById(UUID id) {
+    public Temp findById(String id) {
         return entityManager.find(Temp.class, id);
     }
 
@@ -37,7 +36,7 @@ public class TempDAO {
     }
 
     @Transactional
-    public void deleteById(UUID id) {
+    public void deleteById(String id) {
         Temp temp = entityManager.find(Temp.class, id);
         if (temp != null) {
             entityManager.remove(temp);

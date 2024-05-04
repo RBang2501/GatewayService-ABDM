@@ -13,11 +13,13 @@ import HAD.project.backend.Model.Request;
 import HAD.project.backend.Model.TokenToLink;
 import HAD.project.backend.Service.RequestService;
 import HAD.project.backend.Service.TokenToLinkService;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.*;
 
 @RestController
 @CrossOrigin("*")
+@RequestMapping("/record-to-abha-link")
 public class AbhaLinkRecordController {
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -34,9 +36,9 @@ public class AbhaLinkRecordController {
     @Value("${abdm.clientSecret}")
     private String clientSecret;
 
-    @PostMapping("/generateToken")
+
     public String generateToken() {
-        String apiUrl = "https://dev.abdm.gov.in/gateway/v0.5/sessions"; // Replace with your actual API URL
+        String apiUrl = "https://dev.abdm.gov.in/gateway/v0.5/sessions"; 
 
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("clientId", clientId);
@@ -123,10 +125,7 @@ public class AbhaLinkRecordController {
         requester.put("id", requesterId);
         query.put("requester", requester);
 
-        responseJson.put("query", query);
-
-        // return responseJson;
-        
+        responseJson.put("query", query);        
         String accessToken = generateToken();
 
         String apiToFetchAuth = "https://dev.abdm.gov.in/gateway/v0.5/users/auth/init";

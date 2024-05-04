@@ -70,14 +70,23 @@ public class WebHookController {
             
             Map<String, Object> resp = (Map<String, Object>) payloadMap.get("resp");
             String requestId = (String) resp.get("requestId");
+            System.out.println("Request ID: " + requestId);
+
+            String newRequestId = (String) payloadMap.get("requestId");
+            System.out.println(newRequestId);
+
+            Request requestRecord = requestService.getRequestByRequestId(requestId);
+            requestRecord.setRequestId(newRequestId);
+            requestService.updateRequest(requestRecord);
 
             Temp temp = new Temp();
-            temp.setRequestId(requestId);
+            temp.setRequestId(newRequestId);
             temp.setJsonString(payload);
             tempService.save(temp);
         } catch (JsonProcessingException e) {
             e.printStackTrace(); 
         }
+
     }
 
 
@@ -88,8 +97,24 @@ public class WebHookController {
             
             Map<String, Object> resp = (Map<String, Object>) payloadMap.get("resp");
             String requestId = (String) resp.get("requestId");
+            Map<String, Object> auth = (Map<String, Object>) payloadMap.get("auth");
+            String transactionId = (String) auth.get("transactionId");
+            System.out.println("Transaction ID: " + transactionId);
+
+            String newRequestId = (String) payloadMap.get("requestId");
+            System.out.println("NewRequest ID: " + newRequestId);
+
+            Request requestRecord = requestService.getRequestByRequestId(requestId);
+            requestRecord.setRequestId(newRequestId);
+            requestRecord.setTransactionId(transactionId);
+            requestService.updateRequest(requestRecord);
+
+            Map<String, Object> responseJson = new HashMap<>();
+            responseJson.put("requestId", newRequestId);
+            responseJson.put("transactionId", transactionId);
+
             Temp temp = new Temp();
-            temp.setRequestId(requestId);
+            temp.setRequestId(newRequestId);
             temp.setJsonString(payload);
             tempService.save(temp);
         } catch (JsonProcessingException e) {
@@ -137,7 +162,7 @@ public class WebHookController {
     
             
             Temp temp = new Temp();
-            temp.setRequestId(requestId);
+            temp.setRequestId(newRequestId);
             temp.setJsonString(payload);
             tempService.save(temp);
            
