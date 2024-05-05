@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import HAD.project.backend.DAO.BundleDAO;
 import HAD.project.backend.Model.Bundle;
@@ -80,7 +81,7 @@ public class DataTransferController {
     }
 
     @PostMapping("/consent-request")
-    public ResponseEntity<Map<String, Object>> fetchAuthModes(@RequestBody Map<String, Object> requestJson) {
+    public String fetchConsent(@RequestBody Map<String, Object> requestJson) {
         String accessToken = generateToken();
         String apiToFetchAuth = "https://dev.abdm.gov.in/gateway/v0.5/consent-requests/init";
         HttpHeaders fetchAuthHeaders = new HttpHeaders();
@@ -90,7 +91,9 @@ public class DataTransferController {
         HttpEntity<Map<String, Object>> fetchAuthEntity = new HttpEntity<>(requestJson, fetchAuthHeaders);
         ResponseEntity<Map<String, Object>> fetchAuthResponseEntity = restTemplate.exchange(apiToFetchAuth,
                 HttpMethod.POST, fetchAuthEntity, new ParameterizedTypeReference<Map<String, Object>>() {});
-        return new ResponseEntity<>(fetchAuthResponseEntity.getBody(), fetchAuthResponseEntity.getStatusCode());
+        new ResponseEntity<>(fetchAuthResponseEntity.getBody(), fetchAuthResponseEntity.getStatusCode());
+
+        return "Consent Sent Successfully!";
     }
 
 }
