@@ -36,7 +36,7 @@ public class AbhaLinkRecordController {
     @Value("${abdm.clientSecret}")
     private String clientSecret;
 
-
+    @PostMapping("/generate-token")
     public String generateToken() {
         String apiUrl = "https://dev.abdm.gov.in/gateway/v0.5/sessions"; 
 
@@ -186,6 +186,7 @@ public class AbhaLinkRecordController {
         Map<String, Object> patient = new HashMap<>();
         patient.put("referenceNumber", referenceNumber);
         patient.put("display", display);
+
     
         List<Map<String, Object>> careContexts = (List<Map<String, Object>>) requestJson.get("careContexts");
         
@@ -195,6 +196,8 @@ public class AbhaLinkRecordController {
 
     
         String jwtToken = generateToken();
+
+        System.out.println("hello");
     
         String apiToFetchAuth = "https://dev.abdm.gov.in/gateway/v0.5/links/link/add-contexts";
         HttpHeaders fetchAuthHeaders = new HttpHeaders();
