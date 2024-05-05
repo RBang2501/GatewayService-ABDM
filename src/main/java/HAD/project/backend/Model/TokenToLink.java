@@ -14,7 +14,7 @@ public class TokenToLink {
     @Id 
     private String patientAbhaAddress;
 
-    @Column(columnDefinition = "LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+    @Column(columnDefinition = "LONGTEXT")
     private String accessToken;
 
     private String expiryTimeStamp;
